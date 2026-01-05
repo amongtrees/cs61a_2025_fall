@@ -160,6 +160,12 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return tree(label(t), [tree(x) for x in leaves])
+    else:
+        new_t = tree(label(t), [sprout_leaves(branch, leaves) for branch in branches(t)])
+        return new_t
+
 
 
 def prune_leaves(t, vals):
@@ -187,7 +193,14 @@ def prune_leaves(t, vals):
       6
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t) and (label(t) in vals):
+      return None
+    new_branches = []
+    for b in branches(t):
+      new_branch = prune_leaves(b, vals)
+      if new_branch:
+        new_branches.append(new_branch)
+    return tree(label(t), new_branches)
 
 def pathsum(t, n):
     """
@@ -198,6 +211,12 @@ def pathsum(t, n):
     False
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t) and label(t) == n:
+        return True
+    elif is_leaf(t):
+        return False
+    else:
+        return any([pathsum(branch, n - label(t)) for branch in branches(t)])
 
 
 def sum_tree(t):
@@ -208,6 +227,11 @@ def sum_tree(t):
     15
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return label(t)
+    else:
+        return label(t) + sum([sum_tree(branch) for branch in branches(t)])
+
 
 def balanced(t):
     """Checks if each branch has same sum of all elements and
@@ -224,6 +248,14 @@ def balanced(t):
     False
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return True
+    else:
+        sum = sum_tree(branches(t)[0])
+        for b in branches(t):
+            if sum_tree(b) != sum:
+                return False
+        return all([balanced(b) for b in branches(t)])
 
 
 def partial_reverse(s: list[int], start: int) -> None:
@@ -239,8 +271,9 @@ def partial_reverse(s: list[int], start: int) -> None:
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
-
-
+    length = len(s) - start
+    for i in range((len(s) - start) // 2):
+        s[start + i], s[start + length - i - 1] = s[start + length - i - 1], s[start + i]
 
 # Tree Data Abstraction
 
